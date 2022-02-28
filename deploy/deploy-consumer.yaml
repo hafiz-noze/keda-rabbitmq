@@ -3,13 +3,13 @@ kind: Secret
 metadata:
   name: rabbitmq-consumer-secret
 data:
-  RabbitMqHost: YW1xcDovL3VzZXI6UEFTU1dPUkRAcmFiYml0bXEuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDo1Njcy
+  RabbitMqHost: YW1xcHM6Ly9VU0VSOlBBU1NASE9TVC9WSE9TVA==
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rabbitmq-consumer
-  namespace: default
+  namespace: keda
   labels:
     app: rabbitmq-consumer
 spec:
@@ -28,13 +28,13 @@ spec:
           command:
             - receive
           args:
-            - "amqp://user:PASSWORD@rabbitmq.default.svc.cluster.local:5672"
+            - "amqp://user:PASSWORD@rabbitmq.keda.svc.cluster.local:5672"
 ---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: rabbitmq-consumer
-  namespace: default
+  namespace: keda
 spec:
   scaleTargetRef:
     name: rabbitmq-consumer
@@ -53,7 +53,7 @@ apiVersion: keda.sh/v1alpha1
 kind: TriggerAuthentication
 metadata:
   name: rabbitmq-consumer-trigger
-  namespace: default
+  namespace: keda
 spec:
   secretTargetRef:
     - parameter: host
